@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
       path: '/auth',
       query: { redirect: to.fullPath }
     })
-  } else if (to.path == '/auth' && accountDetails) {
+  } else if (accountDetails && to.path == '/auth') {
     next('/')
   } else {
     next() // make sure to always call next()!
