@@ -10,6 +10,7 @@
         single-line
         append-icon="person"
         solo
+        ref="username"
         background-color="teal lighten-5"
         color="teal"
         v-model="accountData.username"
@@ -24,14 +25,14 @@
         color="teal"
         :disabled="valid"
         flat
-        ref="password"
         background-color="teal lighten-5"
         v-model="accountData.password"
         :append-icon="passVisi ? 'visibility_off' : 'visibility'"
         :rules="passRules"
         @click:append="passVisi = !passVisi"
+        ref="password"
       ></v-text-field>
-      <v-btn type="submit" :loading="valid" 
+      <v-btn  :disabled="validEntry" type="submit" :loading="valid" 
         dark color="teal lighten-1" large block 
         > 
         <v-icon size="18" class="mr-1">mdi-login</v-icon>
@@ -59,13 +60,19 @@ export default {
       v => !!v || "Enter your password",
     ]
   }),
+  computed: {
+    validEntry() {
+      if (this.accountData.username == "" || this.accountData.password == "") {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
   methods: {
-    submitForm() {
-      this.valid= true
-      this.errorMessage = ''
-      this.isError = false
-      let vm = this
-      firebase.auth().signInWithEmailAndPassword(vm.accountData.username, vm.accountData.password).then(
+    signInto(emailPass) {
+      var vm = this
+      firebase.auth().signInWithEmailAndPassword(emailPass, vm.accountData.password).then(
         function (user) {
           const accountDetails = Object.assign({},{user} );
           localStorage.setItem("accountDetails", JSON.stringify(accountDetails));
@@ -75,11 +82,32 @@ export default {
         function(error) {
           // var errorCode = error.code;
           vm.valid= false
-          var errorMessage = error.message
+          vm.accountData.isError = true
+          vm.accountData.password = ''
+          vm.$nextTick(() => vm.$refs.password.focus())
+          vm.accountData.errorMessage = 'These credentials do not match our records.'
+      })
+    },
+    submitForm() {
+      this.valid= true
+      this.errorMessage = ''
+      this.isError = false
+      let vm = this
+      let firebaseDB = firebase.database()
+      // Disable deprecated features
+      let AccountUserRef = firebaseDB.ref("AccountUser")
+      AccountUserRef.on('value', function(getData) {
+        var usernameData = _.find(getData.val(), ['username', vm.accountData.username]);
+        if(usernameData) {
+          vm.signInto(usernameData.email)
+        } else {
+          vm.valid= false
           vm.accountData.isError = true
           vm.accountData.password = ''
           vm.$refs.password.focus()
           vm.accountData.errorMessage = 'These credentials do not match our records.'
+        }
+      // console.log("​submitForm -> usernameData", usernameData)
       })
     }
   }

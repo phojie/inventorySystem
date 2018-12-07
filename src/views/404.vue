@@ -1,3 +1,3 @@
 <template>
-  <v-content> 440 - page not found  </v-content>
+  <v-content> 404 - page not found  </v-content>
 </template>
