@@ -7,3 +7,45 @@ html {
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
 }
+.bgright2 {
+  background-image: url('imgs/bg.jpg');
+  background-position: 0% 50%; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+.textLower {
+  text-transform: lowercase !important; 
+}
+.textUpper {
+  text-transform: uppercase !important; 
+}
+.textNone {
+  text-transform: none !important; 
+}
+.textCapital {
+  text-transform: capitalize !important; 
+}
+
+.jiebtn .v-input__control   {
+  /* margin-top:8px; */
+  min-height:37px !important;
+  height: 48px !important;
+  padding: 5px !important;
+}
+
+.jiebtn .v-input__slot   {
+  /* border:solid #E0E0E0 1px; */
+  border-radius:4px !important;
+  -webkit-transition: width 2s; /* Safari */
+  transition: width .2;
+}
+
+.jiebtn .v-label {
+  /* color: rgba(0,0,0,0.54) !important; */
+  font-size: 15px !important;
+}
+.jiebtn .v-icon {
+  /* color: rgba(0,0,0,0.54) !important; */
+  font-size: 20px !important;
+}

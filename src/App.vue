@@ -19,5 +19,10 @@
       return {
       }
     },
+    created() {
+      this.$store.commit('saveAccountDetails')
+      this.$store.commit('getSales')
+
+    }
   }
 </script>

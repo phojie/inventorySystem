@@ -4,6 +4,11 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+
+var moment = require('moment');
+moment().format();
+
+
 // Load the full build.
 var _ = require('lodash');
 // Load the core build.
@@ -20,7 +25,7 @@ var at = require('lodash/at');
 var curryN = require('lodash/fp/curryN');
 
 
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 const config = {
   apiKey: "AIzaSyDx5FJmdWWj_Fi-2DXYnpkhQST83_9ugtc",
   authDomain: "inventory-system-9a2c4.firebaseapp.com",
@@ -30,6 +35,9 @@ const config = {
   messagingSenderId: "669915201568"
 };
 firebase.initializeApp(config);
+
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
 
 Vue.config.productionTip = false
 

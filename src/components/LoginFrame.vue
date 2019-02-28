@@ -70,11 +70,13 @@ export default {
     }
   },
   methods: {
-    signInto(emailPass) {
+    signInto(usernameData,userIndex) {
       var vm = this
-      firebase.auth().signInWithEmailAndPassword(emailPass, vm.accountData.password).then(
+      firebase.auth().signInWithEmailAndPassword(usernameData.email, vm.accountData.password).then(
         function (user) {
-          const accountDetails = Object.assign({},{user} );
+          const accountDetails = Object.assign({},{user});
+          const accountUserDetails = userIndex;
+          localStorage.setItem("userIndex",  userIndex);
           localStorage.setItem("accountDetails", JSON.stringify(accountDetails));
           vm.$store.commit('saveAccountDetails')
           vm.$router.push('/')
@@ -85,6 +87,7 @@ export default {
           vm.accountData.isError = true
           vm.accountData.password = ''
           vm.$nextTick(() => vm.$refs.password.focus())
+          // vm.accountData.errorMessage = error.message
           vm.accountData.errorMessage = 'These credentials do not match our records.'
       })
     },
@@ -96,19 +99,30 @@ export default {
       let firebaseDB = firebase.database()
       // Disable deprecated features
       let AccountUserRef = firebaseDB.ref("AccountUser")
-      AccountUserRef.on('value', function(getData) {
-        var usernameData = _.find(getData.val(), ['username', vm.accountData.username]);
-        if(usernameData) {
-          vm.signInto(usernameData.email)
-        } else {
-          vm.valid= false
-          vm.accountData.isError = true
-          vm.accountData.password = ''
-          vm.$refs.password.focus()
-          vm.accountData.errorMessage = 'These credentials do not match our records.'
-        }
+      setTimeout(function() {
+        AccountUserRef.on('value', function(getData) {
+          var usernameData = _.find(getData.val(), {'username': _.capitalize(vm.accountData.username), 'password': vm.accountData.password});
+            if(usernameData) {
+              const accountDetails = Object.assign({},{usernameData});
+              const accountUserDetails = usernameData.keyIndex;
+              localStorage.setItem("userIndex",  usernameData.keyIndex);
+              localStorage.setItem("accountDetails", JSON.stringify(accountDetails));
+              vm.$store.commit('saveAccountDetails')
+              vm.$router.push('/')
+            //  var userIndex = _.findKey(getData.val(), ['email', _.capitalize(usernameData.email)]);
+            //  vm.signInto(usernameData,userIndex)
+            } else {
+              vm.valid= false
+              vm.accountData.isError = true
+              vm.accountData.password = ''
+              vm.$refs.password.focus()
+              vm.accountData.errorMessage = 'These credentials do not match our records.'
+            }
+       
       // console.log("​submitForm -> usernameData", usernameData)
-      })
+        })
+      },2000)
+
     }
   }
 }
